@@ -1281,6 +1281,8 @@
       max-width: 1152px;
       margin: 0 auto;
       padding: 0 16px;
+    }
+    .footer-top-row {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -1314,6 +1316,30 @@
     .footer-icon {
       height: 16px;
       width: 16px;
+    }
+    .footer-bottom-bar {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 24px 0 0;
+      font-size: 12px;
+      color: #9894a6;
+    }
+    .footer-bottom-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-bottom-links a {
+      color: #9894a6;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-bottom-links a:hover {
+      color: var(--foreground);
     }
 
     /* ============================================================
@@ -1353,9 +1379,12 @@
       .work-card-inner {
         width: 300px;
       }
-      .footer-container {
+      .footer-top-row {
         flex-direction: row;
         align-items: center;
+      }
+      .footer-bottom-bar {
+        flex-direction: row;
       }
       .founder-img-wrapper img {
         height: 288px;
@@ -1920,19 +1949,29 @@
   <!-- Footer -->
   <footer>
     <div class="footer-container">
-      <div class="footer-brand">
-        <div class="logo"><span>+91</span> Studio</div>
-        <span class="copyright-label">© <span id="current-year"></span> +91 Studio</span>
+      <div class="footer-top-row">
+        <div class="footer-brand">
+          <div class="logo"><span>+91</span> Studio</div>
+          <span class="copyright-label">© <span class="current-year-val">2026</span> +91 Studio</span>
+        </div>
+        <div class="footer-links">
+          <a href="mailto:hello@plus91.studio" class="footer-link-item">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>hello@plus91.studio</span>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noreferrer" class="footer-link-item">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            <span>Instagram</span>
+          </a>
+        </div>
       </div>
-      <div class="footer-links">
-        <a href="mailto:hello@plus91.studio" class="footer-link-item">
-          <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          <span>hello@plus91.studio</span>
-        </a>
-        <a href="https://instagram.com" target="_blank" rel="noreferrer" class="footer-link-item">
-          <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-          <span>Instagram</span>
-        </a>
+
+      <div class="footer-bottom-bar">
+        <p>© <span class="current-year-val">2026</span> +91 Studio</p>
+        <div class="footer-bottom-links">
+          <a href="#top">Privacy Policy</a>
+          <a href="#top">Terms &amp; Conditions</a>
+        </div>
       </div>
     </div>
   </footer>
@@ -1942,7 +1981,9 @@
   ============================================================ -->
   <script>
     // --- Set copyright year ---
-    document.getElementById('current-year').textContent = new Date().getFullYear();
+    document.querySelectorAll('.current-year-val').forEach(el => {
+      el.textContent = new Date().getFullYear();
+    });
 
     // --- Header scroll state ---
     const header = document.getElementById('nav-header');
