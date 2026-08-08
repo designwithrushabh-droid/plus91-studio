@@ -57,7 +57,7 @@
   }
 
   .wrap{max-width:1240px; margin:0 auto; padding:0 32px; position:relative; z-index:2;}
-  @media(max-width:760px){.wrap{padding:0 20px;}}
+  @media(max-width:760px){.wrap{padding:0 28px;}}
 
   .eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; color:var(--purple-300);}
   .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400); box-shadow:0 0 10px var(--purple-400); flex-shrink:0;}
@@ -203,15 +203,14 @@
   .svc-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
   @media(max-width:980px){.svc-grid{grid-template-columns:1fr 1fr;}}
   @media(max-width:560px){
-    .svc-grid{grid-template-columns:1fr 1fr; gap:10px;}
-    .svc-card{min-height:170px; border-radius:12px;}
-    .svc-preview{height:60px;}
-    .svc-body{padding:12px; gap:4px;}
+    .svc-grid{grid-template-columns:1fr 1fr; gap:12px;}
+    .svc-card{min-height:110px; border-radius:12px;}
+    .svc-body{padding:14px; gap:4px;}
     .svc-card h3{font-size:14px;}
-    .svc-card p{font-size:11px; line-height:1.3;}
-    .svc-link{font-size:10px; gap:4px;}
+    .svc-card p{font-size:11px; line-height:1.3; margin-bottom:4px;}
+    .svc-link{font-size:12px; font-weight:700;}
   }
-  .svc-card{border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); position:relative; overflow:hidden; transition:transform .25s ease, border-color .25s ease, background .25s ease; display:flex; flex-direction:column; min-height:220px;}
+  .svc-card{border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); position:relative; overflow:hidden; transition:transform .25s ease, border-color .25s ease, background .25s ease; display:flex; flex-direction:column; min-height:140px;}
   .svc-card:hover{transform:translateY(-6px); border-color:rgba(168,85,247,.4); background:var(--panel-2);}
   .svc-preview{height:90px; position:relative; overflow:hidden; background:linear-gradient(120deg,#1c1030,#0c0715 60%);}
   .svc-preview::before{content:''; position:absolute; inset:-40% -20%; background:conic-gradient(from 0deg, transparent, rgba(168,85,247,.35), transparent 40%); animation:spin 7s linear infinite;}
@@ -311,8 +310,8 @@
   .big-slide .bs-cat{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--purple-300); font-weight:700;}
   .big-slide .bs-name{font-size:clamp(22px,3.4vw,34px); font-weight:800; margin-top:6px; letter-spacing:-.02em;}
   .big-controls{display:flex; align-items:center; justify-content:center; gap:18px; margin-top:26px;}
-  .car-btn{width:42px;height:42px; border-radius:50%; border:1px solid var(--border); background:var(--panel); display:flex; align-items:center; justify-content:center; transition:background .2s, border-color .2s;}
-  .car-btn:hover{background:var(--purple-500); border-color:var(--purple-500);}
+  .car-btn{width:42px;height:42px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:transparent; display:flex; align-items:center; justify-content:center; color:#fff; transition:background .2s, border-color .2s, color .2s;}
+  .car-btn:hover{background:#fff; border-color:#fff; color:#07050d;}
   .car-dots{display:flex; gap:8px;}
   .car-dot{width:7px;height:7px;border-radius:50%; background:var(--border); transition:background .2s, width .2s;}
   .car-dot.active{background:var(--purple-400); width:20px; border-radius:4px;}
@@ -368,6 +367,20 @@
     .proc-cell .n{font-size:20px !important;}
     .proc-cell h4{font-size:14px !important; margin-top:8px !important;}
     .proc-cell p{font-size:11.5px !important; margin-top:4px !important; line-height:1.4 !important;}
+
+    /* Hero adjustments & client logos on mobile */
+    .hero-ctas .btn-ghost{display:none !important;}
+    .hero-ctas .btn{
+      padding: 10px 18px !important;
+      font-size: 12.5px !important;
+    }
+    .phone{width:188px !important; border-radius:24px !important;}
+    .reel-spacer{flex:0 0 calc(50% - 94px) !important;}
+    .logo-chip{
+      width: 152px !important;
+      height: 70px !important;
+      font-size: 17px !important;
+    }
   }
 
   @media(max-width:520px){
@@ -577,9 +590,8 @@ function homeTemplate(){
   </section>
 
   <section class="clients-section">
-    <div class="wrap section-head" style="margin-bottom:40px;">
+    <div class="wrap section-head" style="margin-bottom:24px;">
       <div class="eyebrow"><span class="dot"></span>Trusted by Brands</div>
-      <h2>Creative work for brands <span class="italic">that want to stand out.</span></h2>
     </div>
     <div class="logo-track-outer"><div class="logo-track" id="logoTrack"></div></div>
   </section>
@@ -636,7 +648,11 @@ function homeTemplate(){
           ${TESTIMONIALS.map(t=>testimonialCard(t)).join("")}
         </div>
       </div>
-      <div class="t-dots" id="tDots"></div>
+      <div class="t-controls" style="display:flex; align-items:center; justify-content:center; gap:18px; margin-top:20px;">
+        <button class="car-btn" id="tPrev" aria-label="Previous">←</button>
+        <div class="t-dots" id="tDots" style="margin-top:0;"></div>
+        <button class="car-btn" id="tNext" aria-label="Next">→</button>
+      </div>
     </div>
   </section>
 
@@ -663,12 +679,11 @@ function testimonialCard(t){
 
 function svcCardHTML(num, slug, title, desc){
   return `<a class="svc-card" href="#/service/${slug}">
-      <div class="svc-preview"></div>
       <div class="svc-body">
         <div class="svc-num">${num}</div>
         <h3>${title}</h3>
         <p>${desc}</p>
-        <span class="svc-link">Explore ${title} →</span>
+        <span class="svc-link">→</span>
       </div>
     </a>`;
 }
@@ -724,7 +739,11 @@ function serviceTemplate(slug){
       <div class="t-carousel" id="tCarousel2">
         <div class="t-track" id="tTrack2">${TESTIMONIALS.map(t=>testimonialCard(t)).join("")}</div>
       </div>
-      <div class="t-dots" id="tDots2"></div>
+      <div class="t-controls" style="display:flex; align-items:center; justify-content:center; gap:18px; margin-top:20px;">
+        <button class="car-btn" id="tPrev2" aria-label="Previous">←</button>
+        <div class="t-dots" id="tDots2" style="margin-top:0;"></div>
+        <button class="car-btn" id="tNext2" aria-label="Next">→</button>
+      </div>
     </div>
   </section>
 
@@ -759,9 +778,11 @@ function buildLogos(){
 }
 
 /* generic auto-carousel for testimonials (single slide) */
-function buildTestimonialCarousel(trackId, dotsId){
+function buildTestimonialCarousel(trackId, dotsId, prevId, nextId){
   const track = document.getElementById(trackId);
   const dotsWrap = document.getElementById(dotsId);
+  const prevBtn = document.getElementById(prevId);
+  const nextBtn = document.getElementById(nextId);
   if(!track) return;
   const n = TESTIMONIALS.length;
   let idx = 0;
@@ -771,6 +792,8 @@ function buildTestimonialCarousel(trackId, dotsId){
     dotsWrap.querySelectorAll('.t-dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
   }
   dotsWrap.querySelectorAll('.t-dot').forEach(d=>{ d.onclick = ()=>{ idx = parseInt(d.dataset.i); update(); resetTimer(); }; });
+  if(prevBtn) prevBtn.onclick = ()=>{ idx=(idx-1+n)%n; update(); resetTimer(); };
+  if(nextBtn) nextBtn.onclick = ()=>{ idx=(idx+1)%n; update(); resetTimer(); };
   let timer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 4200);
   function resetTimer(){ clearInterval(timer); timer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 4200); }
   const wrap = track.closest('.t-carousel');
@@ -900,13 +923,13 @@ function render(){
   if(parts[0] === 'service' && parts[1]){
     app.innerHTML = serviceTemplate(parts[1]);
     buildBigSlider(parts[1]);
-    buildTestimonialCarousel('tTrack2','tDots2');
+    buildTestimonialCarousel('tTrack2','tDots2','tPrev2','tNext2');
     window.scrollTo({top:0, behavior:'instant'});
   } else {
     app.innerHTML = homeTemplate();
     buildMarquee();
     buildLogos();
-    buildTestimonialCarousel('tTrack','tDots');
+    buildTestimonialCarousel('tTrack','tDots','tPrev','tNext');
     initReelSlider();
     const anchorMatch = hash.match(/#([a-zA-Z-]+)$/);
     if(anchorMatch && hash.startsWith('#/#')){
