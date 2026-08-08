@@ -235,7 +235,6 @@
     ============================================================ */
     header {
       position: fixed;
-      inset: x 0;
       top: 0;
       left: 0;
       right: 0;
@@ -1063,6 +1062,15 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
+      align-items: start;
+    }
+    .testimonial-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .testimonial-column-staggered {
+      margin-top: 36px;
     }
     .testimonial-card-wrap {
       transition: transform 0.3s;
@@ -1311,6 +1319,21 @@
     /* ============================================================
        RESPONSIVE ADJUSTMENTS
     ============================================================ */
+    .hero-side-phone {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .hero-side-phone {
+        display: block !important;
+      }
+      .founder-img-wrapper img {
+        height: 320px;
+      }
+      .mobile-nav-panel {
+        display: none !important;
+      }
+    }
+
     @media (min-width: 640px) {
       .hero-cta-wrap {
         flex-direction: row;
@@ -1333,6 +1356,9 @@
       .footer-container {
         flex-direction: row;
         align-items: center;
+      }
+      .founder-img-wrapper img {
+        height: 288px;
       }
     }
 
@@ -1358,6 +1384,10 @@
 
       .testimonial-cards-grid {
         grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .testimonial-column-staggered {
+        margin-top: 0;
       }
       .testimonial-card-wrap {
         transform: none !important;
@@ -1497,7 +1527,7 @@
         <!-- Phone display -->
         <div class="phone-fan-container">
           <!-- Left Phone (dimmed/rotated) -->
-          <div class="phone-mockup-wrapper glass phone-size-sm animate-float-slow" style="transform: rotate(-8deg) translateY(20px); display: none;" id="left-hero-phone">
+          <div class="phone-mockup-wrapper glass phone-size-sm animate-float-slow hero-side-phone" style="transform: rotate(-8deg) translateY(20px);" id="left-hero-phone">
             <div class="phone-mockup-inner">
               <img src="images/portfolio_card2.jpg" alt="Creator Story edit preview" loading="lazy" />
               <div class="phone-gradient"></div>
@@ -1531,7 +1561,7 @@
           </div>
 
           <!-- Right Phone (dimmed/rotated) -->
-          <div class="phone-mockup-wrapper glass phone-size-sm animate-float-slow" style="transform: rotate(8deg) translateY(20px); animation-delay: 0.6s; display: none;" id="right-hero-phone">
+          <div class="phone-mockup-wrapper glass phone-size-sm animate-float-slow hero-side-phone" style="transform: rotate(8deg) translateY(20px); animation-delay: 0.6s;" id="right-hero-phone">
             <div class="phone-mockup-inner">
               <img src="images/portfolio_card3.jpg" alt="Product Launch edit preview" loading="lazy" />
               <div class="phone-gradient"></div>
@@ -1742,101 +1772,107 @@
       </div>
 
       <div class="testimonial-cards-grid">
-        <!-- Card 1 -->
-        <div class="testimonial-card-wrap" style="transform: rotate(-3deg);">
-          <div class="chat-card">
-            <div class="chat-header">
-              <div class="chat-avatar-letter">A</div>
-              <div class="chat-sender-info">
-                <div class="chat-sender-name">Ananya · Founder, Loom&Co</div>
-                <div class="chat-sender-time">9:42 PM</div>
+        <!-- Left Column -->
+        <div class="testimonial-column">
+          <!-- Card 1 -->
+          <div class="testimonial-card-wrap" style="transform: rotate(-3deg);">
+            <div class="chat-card">
+              <div class="chat-header">
+                <div class="chat-avatar-letter">A</div>
+                <div class="chat-sender-info">
+                  <div class="chat-sender-name">Ananya · Founder, Loom&Co</div>
+                  <div class="chat-sender-time">9:42 PM</div>
+                </div>
+                <span class="chat-status-badge">online</span>
               </div>
-              <span class="chat-status-badge">online</span>
-            </div>
-            
-            <a href="#" class="chat-preview-link" onclick="event.preventDefault();">
-              <div class="chat-play-square">
-                <svg class="chat-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <div class="chat-link-details">
-                <div class="chat-link-title">Final delivery</div>
-                <div class="chat-link-url">wetransfer.com/…/final-cut</div>
-              </div>
-            </a>
+              
+              <a href="#" class="chat-preview-link" onclick="event.preventDefault();">
+                <div class="chat-play-square">
+                  <svg class="chat-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <div class="chat-link-details">
+                  <div class="chat-link-title">Final delivery</div>
+                  <div class="chat-link-url">wetransfer.com/…/final-cut</div>
+                </div>
+              </a>
 
-            <div class="chat-bubbles-list">
-              <div class="chat-msg-bubble">
-                just watched the final cut. this is INSANE ❤️🔥 the pacing at 0:38 is exactly what we needed
+              <div class="chat-bubbles-list">
+                <div class="chat-msg-bubble">
+                  just watched the final cut. this is INSANE ❤️🔥 the pacing at 0:38 is exactly what we needed
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="testimonial-card-wrap" style="transform: rotate(-2deg);">
+            <div class="chat-card">
+              <div class="chat-header">
+                <div class="chat-avatar-letter">P</div>
+                <div class="chat-sender-info">
+                  <div class="chat-sender-name">Priya · Marketing Lead, Kavya</div>
+                  <div class="chat-sender-time">3:07 PM</div>
+                </div>
+                <span class="chat-status-badge">online</span>
+              </div>
+
+              <a href="#" class="chat-preview-link" onclick="event.preventDefault();">
+                <div class="chat-play-square">
+                  <svg class="chat-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <div class="chat-link-details">
+                  <div class="chat-link-title">Hero launch v3</div>
+                  <div class="chat-link-url">frame.io/…/hero-launch-v3</div>
+                </div>
+              </a>
+
+              <div class="chat-bubbles-list">
+                <div class="chat-msg-bubble">
+                  our CMO literally clapped in the review. can we lock you in for Q4?
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Card 2 -->
-        <div class="testimonial-card-wrap" style="transform: rotate(2deg); margin-top: 24px;">
-          <div class="chat-card">
-            <div class="chat-header">
-              <div class="chat-avatar-letter">M</div>
-              <div class="chat-sender-info">
-                <div class="chat-sender-name">Marcus · Creator, 220k followers</div>
-                <div class="chat-sender-time">12:14 PM</div>
+        <!-- Right Column -->
+        <div class="testimonial-column testimonial-column-staggered">
+          <!-- Card 2 -->
+          <div class="testimonial-card-wrap" style="transform: rotate(2deg);">
+            <div class="chat-card">
+              <div class="chat-header">
+                <div class="chat-avatar-letter">M</div>
+                <div class="chat-sender-info">
+                  <div class="chat-sender-name">Marcus · Creator, 220k followers</div>
+                  <div class="chat-sender-time">12:14 PM</div>
+                </div>
+                <span class="chat-status-badge">online</span>
               </div>
-              <span class="chat-status-badge">online</span>
-            </div>
 
-            <div class="chat-bubbles-list">
-              <div class="chat-msg-bubble">
-                posted the reel last night. 480k views in 8 hours. we're booked for next month right? 🙏
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="testimonial-card-wrap" style="transform: rotate(-2deg);">
-          <div class="chat-card">
-            <div class="chat-header">
-              <div class="chat-avatar-letter">P</div>
-              <div class="chat-sender-info">
-                <div class="chat-sender-name">Priya · Marketing Lead, Kavya</div>
-                <div class="chat-sender-time">3:07 PM</div>
-              </div>
-              <span class="chat-status-badge">online</span>
-            </div>
-
-            <a href="#" class="chat-preview-link" onclick="event.preventDefault();">
-              <div class="chat-play-square">
-                <svg class="chat-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <div class="chat-link-details">
-                <div class="chat-link-title">Hero launch v3</div>
-                <div class="chat-link-url">frame.io/…/hero-launch-v3</div>
-              </div>
-            </a>
-
-            <div class="chat-bubbles-list">
-              <div class="chat-msg-bubble">
-                our CMO literally clapped in the review. can we lock you in for Q4?
+              <div class="chat-bubbles-list">
+                <div class="chat-msg-bubble">
+                  posted the reel last night. 480k views in 8 hours. we're booked for next month right? 🙏
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Card 4 -->
-        <div class="testimonial-card-wrap" style="transform: rotate(3deg); margin-top: 24px;">
-          <div class="chat-card">
-            <div class="chat-header">
-              <div class="chat-avatar-letter">D</div>
-              <div class="chat-sender-info">
-                <div class="chat-sender-name">Devon · YouTuber</div>
-                <div class="chat-sender-time">11:22 AM</div>
+          <!-- Card 4 -->
+          <div class="testimonial-card-wrap" style="transform: rotate(3deg);">
+            <div class="chat-card">
+              <div class="chat-header">
+                <div class="chat-avatar-letter">D</div>
+                <div class="chat-sender-info">
+                  <div class="chat-sender-name">Devon · YouTuber</div>
+                  <div class="chat-sender-time">11:22 AM</div>
+                </div>
+                <span class="chat-status-badge">online</span>
               </div>
-              <span class="chat-status-badge">online</span>
-            </div>
 
-            <div class="chat-bubbles-list">
-              <div class="chat-msg-bubble">
-                retention curve on this one is flat all the way through 🤯 you cook
+              <div class="chat-bubbles-list">
+                <div class="chat-msg-bubble">
+                  retention curve on this one is flat all the way through 🤯 you cook
+                </div>
               </div>
             </div>
           </div>
@@ -1929,20 +1965,7 @@
       });
     });
 
-    // --- Desktop Phone Fan toggle ---
-    const leftHeroPhone = document.getElementById('left-hero-phone');
-    const rightHeroPhone = document.getElementById('right-hero-phone');
-    const showDesktopPhones = () => {
-      if (window.innerWidth >= 640) {
-        leftHeroPhone.style.display = 'block';
-        rightHeroPhone.style.display = 'block';
-      } else {
-        leftHeroPhone.style.display = 'none';
-        rightHeroPhone.style.display = 'none';
-      }
-    };
-    window.addEventListener('resize', showDesktopPhones);
-    showDesktopPhones();
+
 
     // --- Carousel Data (Matching works array) ---
     const carouselWorks = [
@@ -2020,7 +2043,9 @@
         card.style.display = 'block';
 
         // Replicating react-router homepage logic
-        const translate = rel * 240;
+        const isMobile = window.innerWidth < 768;
+        const translateVal = isMobile ? 190 : 250;
+        const translate = rel * translateVal;
         const scale = rel === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
         const opacity = rel === 0 ? 1 : abs === 1 ? 0.55 : 0.25;
         const rotateY = rel * -6;
