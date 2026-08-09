@@ -581,9 +581,9 @@ const TESTIMONIALS = [
 const CLIENTS = ["Loom&Co","Kavya","Arcane Studios","Northfield","Haven","Ridge Capital","Studio Nine","Verve"];
 
 const HERO_REELS = [
-  ["Creator Story","BRAND<br>REEL","Studio Showcase"],
-  ["Fashion Reel","CREATOR<br>STORY","Video Editing Portfolio"],
-  ["Product Launch","SOCIAL<br>CUTS","Fast Edits, Bold Results"],
+  ["Informative Video","CREATOR","Creator story","Videos/content creator_ashish.mp4","images/creator-thumb.png"],
+  ["207k views","DRISHYAM<br>FILMS","Drishyam Films","Videos/Drishyam1.mp4","images/drishyam-thumb.jpg"],
+  ["Podcast Video","LLUMAR<br>FILMS","LLumar Films","Videos/LLumar Video_updated.mp4","images/llumar-thumb.jpg"],
   ["Launch Sequence","KINETIC<br>TITLES","Motion Graphics"],
   ["Documentary Cut","FOUNDER<br>STORY","Long-form Edit"],
   ["Highlight Film","EVENT<br>RECAP","Video Editing"]
@@ -606,14 +606,19 @@ function homeTemplate(){
       <div class="float-chip chip-b"><b>Let's turn your raw</b><span>clips into results.</span></div>
       <div class="reel-slider" id="reelSlider">
         <div class="reel-spacer"></div>
-        ${HERO_REELS.map(r=>`
-        <div class="phone reel-card">
-          <div class="tag-top">${r[0]}</div>
-          <div class="title">${r[1]}</div>
-          <div class="kicker">${r[2]}</div>
-          <div class="reel-progress"><div class="reel-progress-fill"></div></div>
-          <div class="bottom-row"><div class="play">▶</div><span class="dur">0:24</span><span class="reel-pill">Reel</span></div>
-        </div>`).join("")}
+        ${HERO_REELS.map(r=>{
+          const hasUrl = r[3];
+          const bgStyle = r[4] ? `background-image: url('${r[4]}'); background-size: cover; background-position: center;` : '';
+          return `
+          <div class="phone reel-card" data-video-url="${hasUrl || ''}" style="${bgStyle}">
+            <div class="tag-top">${r[0]}</div>
+            <div class="title">${r[1]}</div>
+            <div class="kicker">${r[2]}</div>
+            <div class="reel-progress"><div class="reel-progress-fill"></div></div>
+            <div class="bottom-row"><div class="play">▶</div><span class="dur">0:24</span><span class="reel-pill">Reel</span></div>
+            ${hasUrl ? `<div class="phone-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+          </div>`;
+        }).join("")}
         <div class="reel-spacer"></div>
       </div>
       <div class="reel-controls">
@@ -1009,28 +1014,91 @@ let reelIO = null;
 
 function setPlayingCard(card){
   if(!card || card.classList.contains('is-playing')) return;
+  
+  // Stop and reset all other cards
   document.querySelectorAll('.reel-card.is-playing').forEach(c=>{
     c.classList.remove('is-playing');
     const fill = c.querySelector('.reel-progress-fill');
-    if(fill) fill.classList.remove('animate');
+    if(fill) {
+      fill.classList.remove('animate');
+      fill.style.width = '0%';
+    }
     const icon = c.querySelector('.play');
     if(icon) icon.textContent = '▶';
+    const videoContainer = c.querySelector('.phone-video-container');
+    if(videoContainer){
+      videoContainer.innerHTML = '';
+      videoContainer.style.display = 'none';
+    }
   });
+
   card.classList.add('is-playing');
-  const fill = card.querySelector('.reel-progress-fill');
-  if(fill){ fill.classList.remove('animate'); void fill.offsetWidth; fill.classList.add('animate'); }
   const icon = card.querySelector('.play');
   if(icon) icon.textContent = '❚❚';
+
+  const videoUrl = card.dataset.videoUrl;
+  const videoContainer = card.querySelector('.phone-video-container');
+  const fill = card.querySelector('.reel-progress-fill');
+
+  if(videoUrl && videoContainer){
+    videoContainer.style.display = 'block';
+    videoContainer.innerHTML = `<video src="${videoUrl}" muted autoplay playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></video>`;
+    const video = videoContainer.querySelector('video');
+    
+    // Disable auto-cycle timer while video is playing
+    clearInterval(reelTimer);
+    
+    video.ontimeupdate = () => {
+      if(fill && video.duration){
+        fill.style.width = (video.currentTime / video.duration * 100) + '%';
+      }
+    };
+    
+    video.onended = () => {
+      const slider = document.getElementById('reelSlider');
+      if(slider){
+        const cards = Array.from(slider.querySelectorAll('.reel-card'));
+        const activeIndex = cards.indexOf(card);
+        if(activeIndex !== -1){
+          const nextIndex = (activeIndex + 1) % cards.length;
+          cards[nextIndex].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+          // Restart auto-cycle loop
+          startReelAutoCycle(slider);
+        }
+      }
+    };
+  } else {
+    // Fallback: 4-second CSS progress animation
+    if(fill){
+      fill.style.width = '0%';
+      fill.classList.remove('animate');
+      void fill.offsetWidth; // Trigger reflow
+      fill.classList.add('animate');
+    }
+    
+    // Ensure auto-cycle timer is running
+    const slider = document.getElementById('reelSlider');
+    if(slider) startReelAutoCycle(slider);
+  }
 }
 
 function stopAllReels(){
   document.querySelectorAll('.reel-card.is-playing').forEach(c=>{
     c.classList.remove('is-playing');
     const fill = c.querySelector('.reel-progress-fill');
-    if(fill) fill.classList.remove('animate');
+    if(fill) {
+      fill.classList.remove('animate');
+      fill.style.width = '0%';
+    }
     const icon = c.querySelector('.play');
     if(icon) icon.textContent = '▶';
+    const videoContainer = c.querySelector('.phone-video-container');
+    if(videoContainer){
+      videoContainer.innerHTML = '';
+      videoContainer.style.display = 'none';
+    }
   });
+  clearInterval(reelTimer);
 }
 
 function updateReelCenter(){
