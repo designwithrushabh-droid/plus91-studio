@@ -318,10 +318,17 @@
   .car-dot.active{background:var(--purple-400); width:20px; border-radius:4px;}
 
   .projects-section{padding:20px 0 90px;}
-  .projects-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
-  @media(max-width:900px){.projects-grid{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:560px){.projects-grid{grid-template-columns:1fr;}}
-  .proj-card{aspect-ratio:9/12; border-radius:18px; position:relative; overflow:hidden; border:1px solid var(--border); background:linear-gradient(150deg,#1a0f2c,#0c0715);}
+  .projects-grid, .longform-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media(max-width:900px){
+    .projects-grid, .longform-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:560px){
+    .projects-grid, .longform-grid{grid-template-columns:1fr !important; gap:20px !important; padding:0 16px !important;}
+    .projects-grid .proj-card{max-width:280px; margin:0 auto; width:100%;}
+    .longform-grid .proj-card{max-width:320px; margin:0 auto; width:100%;}
+  }
+  .proj-card{aspect-ratio:9/16; border-radius:18px; position:relative; overflow:hidden; border:1px solid var(--border); background:linear-gradient(150deg,#1a0f2c,#0c0715);}
+  .card-16-9{aspect-ratio:16/9 !important;}
   .proj-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.82));}
   .proj-card .pc-label{position:absolute; left:16px; bottom:16px; right:16px; z-index:2;}
   .proj-card .pc-cat{font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--purple-300); font-weight:700;}
@@ -387,6 +394,26 @@
   @media(max-width:520px){
     .foot-grid{grid-template-columns:repeat(3,1fr); row-gap:32px; column-gap:12px;}
     .foot-grid .foot-col:first-child{grid-column:span 3;}
+
+    /* What We Do 3-column compact grid on mobile */
+    .offer-grid{
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px !important;
+    }
+    .offer-card{
+      padding: 12px 8px !important;
+      border-radius: 10px !important;
+      text-align: center;
+    }
+    .offer-card .n{
+      font-size: 11px !important;
+    }
+    .offer-card h4{
+      font-size: 10px !important;
+      margin-top: 6px !important;
+      line-height: 1.2 !important;
+      word-break: break-word;
+    }
   }
 </style>
 </head>
@@ -491,7 +518,8 @@ const SERVICES = {
     title:"Video Editing",
     heroLine:"Raw footage. <span class=\"italic\">Better stories.</span>",
     slides:[["Reel","Brand Reel","Fintech Launch"],["Reel","Creator Story","Studio Showcase"],["Reel","Social Cuts","Product Launch"],["Doc","Founder Story","Documentary Cut"]],
-    projects:[["Reel","Brand Reel"],["Reel","Creator Story"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"],["Reel","Podcast Clips"]],
+    projects:[["Reel","Brand Reel"],["Reel","Creator Story"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
+    longFormProjects:[["Doc","Brand Documentary"],["Podcast","Full Podcast Episode"],["Vlog","Travel Film Showreel"],["Tutorial","Product Walkthrough"],["Interview","Founder Fireside Chat"],["Corporate","Company Culture Film"]],
     offers:["Storytelling","Pacing","Sound Design","Colour","Motion & VFX","Social Editing"],
     ctaLine:"Have footage? <span class=\"italic\">Let's turn it into a story.</span>"
   },
@@ -688,7 +716,7 @@ function serviceTemplate(slug){
     <a href="#/#services-preview" data-nav="/" class="back-link">← Back to Services</a>
     <div class="eyebrow"><span class="dot"></span>${s.title}</div>
     <h1>${s.heroLine}</h1>
-    <p class="svc-hero-sub">Selected work, what we cover, and how a project with us runs from first call to final file.</p>
+    <p class="svc-hero-sub">${slug === 'video-editing' ? 'Recent work' : 'Selected work, what we cover, and how a project with us runs from first call to final file.'}</p>
   </section>
 
   <section class="big-slider-section wrap">
@@ -705,11 +733,29 @@ function serviceTemplate(slug){
   </section>
 
   <section class="projects-section wrap">
-    <div class="section-head"><div class="eyebrow"><span class="dot"></span>Selected Projects</div><h2 style="font-size:clamp(26px,3.4vw,38px);">Recent <span class="italic">${s.title.toLowerCase()}</span> work.</h2></div>
+    <div class="section-head"><div class="eyebrow"><span class="dot"></span>Selected Projects</div><h2 style="font-size:clamp(26px,3.4vw,38px);">${slug === 'video-editing' ? 'Short form content' : `Recent ${s.title.toLowerCase()} work.`}</h2></div>
     <div class="projects-grid">
       ${s.projects.map(p=>`<div class="proj-card"><div class="pc-label"><div class="pc-cat">${p[0]}</div><div class="pc-name">${p[1]}</div></div></div>`).join("")}
     </div>
   </section>
+
+  ${s.longFormProjects ? `
+  <section class="projects-section wrap" style="padding-top: 0; padding-bottom: 90px;">
+    <div class="section-head">
+      <div class="eyebrow"><span class="dot"></span>Selected Projects</div>
+      <h2 style="font-size:clamp(26px,3.4vw,38px);">Long form content</h2>
+    </div>
+    <div class="longform-grid">
+      ${s.longFormProjects.map(p=>`
+      <div class="proj-card card-16-9">
+        <div class="pc-label">
+          <div class="pc-cat">${p[0]}</div>
+          <div class="pc-name">${p[1]}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+  </section>
+  ` : ''}
 
   <section class="offer-section wrap">
     <div class="section-head"><div class="eyebrow"><span class="dot"></span>What We Do</div><h2 style="font-size:clamp(26px,3.4vw,38px);">Everything under <span class="italic">${s.title}.</span></h2></div>
