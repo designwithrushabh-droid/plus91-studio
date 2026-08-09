@@ -87,6 +87,7 @@
 
   .has-dropdown{position:relative;}
   .dropdown{position:absolute; top:calc(100% + 14px); left:50%; transform:translateX(-50%) translateY(4px); min-width:230px; background:var(--panel-2); border:1px solid var(--border); border-radius:16px; padding:8px; opacity:0; visibility:hidden; transition:opacity .18s ease, transform .18s ease; box-shadow:0 20px 40px -12px rgba(0,0,0,.6);}
+  .dropdown::before{content:''; position:absolute; top:-16px; left:0; right:0; height:16px; background:transparent;}
   .has-dropdown:hover .dropdown, .has-dropdown.open .dropdown{opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);}
   .dropdown a{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; font-size:14px; color:var(--text-muted);}
   .dropdown a:hover{background:rgba(255,255,255,.05); color:var(--text);}
