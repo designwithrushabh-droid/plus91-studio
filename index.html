@@ -533,7 +533,7 @@ const SERVICES = {
     title:"Video Editing",
     heroLine:"Raw footage. <span class=\"italic\">Better stories.</span>",
     slides:[["Reel","SaaS Animation","Firmflow","https://youtu.be/hCckaL_B3Jg?si=2a1nCp81ZRexiXso","images/firmflow-thumb.png"],["Reel","Explainer Video","Airbnb Analog Nomad","https://youtu.be/pbRBdpPhlbU","images/airbnb-thumb.png"],["Reel","Podcast Video","Gras-i Surface Solutions","https://www.youtube.com/watch?v=DJYvmSfzTnk&list=PLOhlOVHH9hd6ApzXH7HiswXyUkWHxxl_Y","images/podcast-thumb.jpg"],["Doc","Founder Story","Documentary Cut"]],
-    projects:[["Reel","Brand Reel"],["207k views","Drishyam Films","Videos/Drishyam1.mp4"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
+    projects:[["Reel","Brand Reel"],["207k views","Drishyam Films","Videos/Drishyam1.mp4","images/drishyam-thumb.jpg"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
     longFormProjects:[["Doc","Brand Documentary"],["Podcast","Full Podcast Episode"],["Vlog","Travel Film Showreel"],["Tutorial","Product Walkthrough"],["Interview","Founder Fireside Chat"],["Corporate","Company Culture Film"]],
     offers:["Storytelling","Pacing","Sound Design","Colour","Motion & VFX","Social Editing"],
     ctaLine:"Have footage? <span class=\"italic\">Let's turn it into a story.</span>"
@@ -768,14 +768,15 @@ function serviceTemplate(slug){
         const url = p[2] || '';
         const isLocalVideo = url.endsWith('.mp4');
         const isExternal = url && !isLocalVideo;
+        const bgStyle = p[3] ? `background-image: url('${p[3]}'); background-size: cover; background-position: center;` : '';
         
-        let tagOpen = `<div class="proj-card">`;
+        let tagOpen = `<div class="proj-card" style="${bgStyle}">`;
         let tagClose = `</div>`;
         if (isExternal) {
-          tagOpen = `<a href="${url}" target="_blank" class="proj-card clickable-slide" style="text-decoration:none;">`;
+          tagOpen = `<a href="${url}" target="_blank" class="proj-card clickable-slide" style="text-decoration:none; ${bgStyle}">`;
           tagClose = `</a>`;
         } else if (isLocalVideo) {
-          tagOpen = `<div class="proj-card clickable-slide local-video-card" data-video-url="${url}">`;
+          tagOpen = `<div class="proj-card clickable-slide local-video-card" data-video-url="${url}" style="${bgStyle}">`;
           tagClose = `</div>`;
         }
         
@@ -803,14 +804,15 @@ function serviceTemplate(slug){
         const url = p[2] || '';
         const isLocalVideo = url.endsWith('.mp4');
         const isExternal = url && !isLocalVideo;
+        const bgStyle = p[3] ? `background-image: url('${p[3]}'); background-size: cover; background-position: center;` : '';
         
-        let tagOpen = `<div class="proj-card card-16-9">`;
+        let tagOpen = `<div class="proj-card card-16-9" style="${bgStyle}">`;
         let tagClose = `</div>`;
         if (isExternal) {
-          tagOpen = `<a href="${url}" target="_blank" class="proj-card card-16-9 clickable-slide" style="text-decoration:none;">`;
+          tagOpen = `<a href="${url}" target="_blank" class="proj-card card-16-9 clickable-slide" style="text-decoration:none; ${bgStyle}">`;
           tagClose = `</a>`;
         } else if (isLocalVideo) {
-          tagOpen = `<div class="proj-card card-16-9 clickable-slide local-video-card" data-video-url="${url}">`;
+          tagOpen = `<div class="proj-card card-16-9 clickable-slide local-video-card" data-video-url="${url}" style="${bgStyle}">`;
           tagClose = `</div>`;
         }
         
