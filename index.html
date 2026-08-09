@@ -77,8 +77,10 @@
   /* header */
   header{position:sticky; top:0; z-index:100; backdrop-filter:blur(16px); background:rgba(7,5,13,.72); border-bottom:1px solid var(--border-soft);}
   .nav-row{display:flex; align-items:center; justify-content:space-between; height:76px; gap:20px;}
-  .logo{font-weight:800; font-size:19px; letter-spacing:-.02em; display:flex; align-items:center; gap:2px;}
-  .logo .plus{color:var(--purple-400);}
+  .logo{display:flex; align-items:center;}
+  .logo img{height:30px; width:auto; display:block; transition:transform .2s ease;}
+  .logo:hover img{transform:scale(1.02);}
+  @media(max-width:760px){.logo img{height:26px;}}
   nav.main-links{display:flex; align-items:center; gap:34px;}
   nav.main-links a{font-size:14.5px; font-weight:500; color:var(--text-muted); transition:color .2s;}
   nav.main-links a:hover, nav.main-links a.active{color:var(--text);}
@@ -423,7 +425,7 @@
 
 <header>
   <div class="wrap nav-row">
-    <a href="#/" class="logo" data-nav="/"><span class="plus">+91</span>&nbsp;Studio</a>
+    <a href="#/" class="logo" data-nav="/"><img src="images/logo-white.png" alt="+91 Studio"></a>
     <div class="nav-center">
       <nav class="main-links">
         <a href="#/#work" data-nav="/">Work</a>
@@ -467,7 +469,7 @@
   <div class="wrap top">
     <div class="foot-grid">
       <div class="foot-col">
-        <a href="#/" class="logo" data-nav="/"><span class="plus">+91</span>&nbsp;Studio</a>
+        <a href="#/" class="logo" data-nav="/"><img src="images/logo-white.png" alt="+91 Studio"></a>
         <p style="margin-top:14px;">A freelance video editing &amp; motion design studio helping brands, creators and founders ship stories that convert.</p>
         <a class="email" href="mailto:hello@plus91.studio">hello@plus91.studio</a><br>
         <a class="talk" href="#/#contact" data-nav="/">Let's Talk →</a>
