@@ -620,7 +620,7 @@ function homeTemplate(){
               <span class="dur">0:24</span>
               ${hasUrl ? `<span class="reel-pill sound-toggle" style="cursor:pointer; background:rgba(255,255,255,.2); pointer-events:auto; z-index:8;">🔇 Muted</span>` : `<span class="reel-pill">Reel</span>`}
             </div>
-            ${hasUrl ? `<div class="phone-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+            ${hasUrl ? `<div class="phone-video-container" style="position:absolute; inset:-3px; display:none; z-index:5; background:#000;"></div>` : ''}
             ${hasUrl ? `
             <div class="phone-play-btn" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:6; pointer-events:none; opacity:0; transition:opacity .3s ease;">
               <span class="play-icon" style="width:50px; height:50px; border-radius:50%; background:#fff; color:#07050d; display:flex; align-items:center; justify-content:center; font-size:18px; padding-left:3px; box-shadow:0 10px 24px rgba(168,85,247,.45);">▶</span>
@@ -800,7 +800,7 @@ function serviceTemplate(slug){
             <div class="pc-cat">${p[0]}</div>
             <div class="pc-name">${p[1]}</div>
           </div>
-          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:-3px; display:none; z-index:5; background:#000;"></div>` : ''}
         ${tagClose}`;
       }).join("")}
     </div>
@@ -836,7 +836,7 @@ function serviceTemplate(slug){
             <div class="pc-cat">${p[0]}</div>
             <div class="pc-name">${p[1]}</div>
           </div>
-          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:-3px; display:none; z-index:5; background:#000;"></div>` : ''}
         ${tagClose}`;
       }).join("")}
     </div>
@@ -1058,7 +1058,7 @@ function setPlayingCard(card){
     videoContainer.style.display = 'block';
     const isDrishyam = videoUrl.includes('Drishyam1');
     const scaleStyle = isDrishyam ? 'transform: scale(1.03);' : '';
-    videoContainer.innerHTML = `<video src="${videoUrl}" playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit; ${scaleStyle}"></video>`;
+    videoContainer.innerHTML = `<video src="${videoUrl}" playsinline style="width:100%; height:100%; object-fit:cover; ${scaleStyle}"></video>`;
     const video = videoContainer.querySelector('video');
     
     // Disable auto-cycle timer while video is playing
@@ -1289,7 +1289,7 @@ function initLocalVideoPlayers(){
       container.style.display = 'block';
       const isDrishyam = url.includes('Drishyam1');
       const scaleStyle = isDrishyam ? 'transform: scale(1.03);' : '';
-      container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:cover; border-radius:18px; ${scaleStyle}"></video>`;
+      container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:cover; ${scaleStyle}"></video>`;
     });
   });
   activeTimers.push(()=>{
