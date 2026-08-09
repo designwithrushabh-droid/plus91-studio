@@ -519,12 +519,18 @@
 </footer>
 
 <script>
+if(!window.YT){
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
 /* ============ CONTENT DATA ============ */
 const SERVICES = {
   "video-editing": {
     title:"Video Editing",
     heroLine:"Raw footage. <span class=\"italic\">Better stories.</span>",
-    slides:[["Reel","Brand Reel","Firmflow Saas Animation","https://youtu.be/hCckaL_B3Jg?si=2a1nCp81ZRexiXso"],["Reel","Creator Story","Studio Showcase"],["Reel","Social Cuts","Product Launch"],["Doc","Founder Story","Documentary Cut"]],
+    slides:[["Reel","SaaS Animation","Firmflow","https://youtu.be/hCckaL_B3Jg?si=2a1nCp81ZRexiXso","images/firmflow-thumb.png"],["Reel","Creator Story","Studio Showcase"],["Reel","Social Cuts","Product Launch"],["Doc","Founder Story","Documentary Cut"]],
     projects:[["Reel","Brand Reel"],["Reel","Creator Story"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
     longFormProjects:[["Doc","Brand Documentary"],["Podcast","Full Podcast Episode"],["Vlog","Travel Film Showreel"],["Tutorial","Product Walkthrough"],["Interview","Founder Fireside Chat"],["Corporate","Company Culture Film"]],
     offers:["Storytelling","Pacing","Sound Design","Colour","Motion & VFX","Social Editing"],
@@ -731,16 +737,17 @@ function serviceTemplate(slug){
       <div class="big-track" id="bigTrack">
         ${s.slides.map(sl=>{
           const hasUrl = sl[3];
-          const tagOpen = hasUrl ? `<a href="${sl[3]}" target="_blank" class="big-slide clickable-slide">` : `<div class="big-slide">`;
-          const tagClose = hasUrl ? `</a>` : `</div>`;
-          return `${tagOpen}
+          const bgStyle = sl[4] ? `background-image: url('${sl[4]}'); background-size: cover; background-position: center;` : '';
+          return `
+          <div class="big-slide ${hasUrl ? 'clickable-slide' : ''}" data-url="${hasUrl || ''}" style="${bgStyle}">
             <div class="bs-tag">${sl[0]}</div>
             ${hasUrl ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
             <div class="bs-info">
               <div class="bs-cat">${sl[2]}</div>
               <div class="bs-name">${sl[1]}</div>
             </div>
-          ${tagClose}`;
+            ${hasUrl ? `<div class="yt-player-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+          </div>`;
         }).join("")}
       </div>
     </div>
@@ -862,6 +869,45 @@ function buildTestimonialCarousel(trackId, dotsId, prevId, nextId){
 let activeTimers = [];
 function clearAllTimers(){ activeTimers.forEach(fn=>fn()); activeTimers = []; }
 
+let bigSliderTimer = null;
+let currentYTPlayer = null;
+
+function playVideoInSlide(slide, videoUrl) {
+  let videoId = '';
+  const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^#\&\?]{11})/);
+  if(match) videoId = match[1];
+  if(!videoId) return;
+
+  const container = slide.querySelector('.yt-player-container');
+  if(!container) return;
+
+  container.style.display = 'block';
+  clearInterval(bigSliderTimer);
+
+  const playerDivId = 'yt-player-' + Math.random().toString(36).substring(2, 9);
+  container.innerHTML = `<div id="${playerDivId}" style="width:100%; height:100%;"></div>`;
+
+  if(window.YT && window.YT.Player){
+    currentYTPlayer = new window.YT.Player(playerDivId, {
+      videoId: videoId,
+      playerVars: {
+        autoplay: 1,
+        controls: 1,
+        rel: 0,
+        modestbranding: 1
+      },
+      events: {
+        onStateChange: (event) => {
+          if(event.data === window.YT.PlayerState.ENDED){
+            const nextBtn = document.getElementById('bigNext');
+            if(nextBtn) nextBtn.click();
+          }
+        }
+      }
+    });
+  }
+}
+
 function buildBigSlider(slug){
   const s = SERVICES[slug];
   const track = document.getElementById('bigTrack');
@@ -870,19 +916,45 @@ function buildBigSlider(slug){
   const n = s.slides.length;
   let idx = 0;
   dotsWrap.innerHTML = s.slides.map((_,i)=>`<div class="car-dot ${i===0?'active':''}" data-i="${i}"></div>`).join("");
+  
   function update(){
     track.style.transform = `translateX(-${idx*100}%)`;
     dotsWrap.querySelectorAll('.car-dot').forEach((d,i)=> d.classList.toggle('active', i===idx));
+    
+    if(currentYTPlayer){
+      try { currentYTPlayer.destroy(); } catch(e){}
+      currentYTPlayer = null;
+    }
+    track.querySelectorAll('.yt-player-container').forEach(c => {
+      c.style.display = 'none';
+      c.innerHTML = '';
+    });
+    
+    resetTimer();
   }
+  
   document.getElementById('bigPrev').onclick = ()=>{ idx=(idx-1+n)%n; update(); resetTimer(); };
   document.getElementById('bigNext').onclick = ()=>{ idx=(idx+1)%n; update(); resetTimer(); };
   dotsWrap.querySelectorAll('.car-dot').forEach(d=>{ d.onclick = ()=>{ idx=parseInt(d.dataset.i); update(); resetTimer(); }; });
-  let timer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 3600);
-  function resetTimer(){ clearInterval(timer); timer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 3600); }
+  
+  clearInterval(bigSliderTimer);
+  bigSliderTimer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 3600);
+  function resetTimer(){ clearInterval(bigSliderTimer); bigSliderTimer = setInterval(()=>{ idx=(idx+1)%n; update(); }, 3600); }
+  
   const wrap = document.getElementById('bigTrack').closest('.big-slider');
-  wrap.addEventListener('mouseenter', ()=> clearInterval(timer));
+  wrap.addEventListener('mouseenter', ()=> clearInterval(bigSliderTimer));
   wrap.addEventListener('mouseleave', resetTimer);
-  activeTimers.push(()=>clearInterval(timer));
+  
+  track.querySelectorAll('.clickable-slide').forEach(slide => {
+    slide.addEventListener('click', () => {
+      const url = slide.dataset.url;
+      if(url && (!currentYTPlayer || slide.querySelector('.yt-player-container').style.display === 'none')){
+        playVideoInSlide(slide, url);
+      }
+    });
+  });
+  
+  activeTimers.push(()=>{ clearInterval(bigSliderTimer); if(currentYTPlayer){ try{currentYTPlayer.destroy();}catch(e){} } });
 }
 
 /* ============ HERO REEL SLIDER ============ */
