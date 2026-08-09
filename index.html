@@ -1056,7 +1056,9 @@ function setPlayingCard(card){
 
   if(videoUrl && videoContainer){
     videoContainer.style.display = 'block';
-    videoContainer.innerHTML = `<video src="${videoUrl}" playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></video>`;
+    const isDrishyam = videoUrl.includes('Drishyam1');
+    const scaleStyle = isDrishyam ? 'transform: scale(1.03);' : '';
+    videoContainer.innerHTML = `<video src="${videoUrl}" playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit; ${scaleStyle}"></video>`;
     const video = videoContainer.querySelector('video');
     
     // Disable auto-cycle timer while video is playing
@@ -1285,7 +1287,9 @@ function initLocalVideoPlayers(){
       if(!container) return;
       
       container.style.display = 'block';
-      container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:cover; border-radius:18px;"></video>`;
+      const isDrishyam = url.includes('Drishyam1');
+      const scaleStyle = isDrishyam ? 'transform: scale(1.03);' : '';
+      container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:cover; border-radius:18px; ${scaleStyle}"></video>`;
     });
   });
   activeTimers.push(()=>{
