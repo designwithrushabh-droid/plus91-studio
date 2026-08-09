@@ -423,6 +423,22 @@
       line-height: 1.2 !important;
       word-break: break-word;
     }
+  .slide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 20px 0 60px;
+  }
+  @media(max-width:900px){
+    .slide-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media(max-width:560px){
+    .slide-grid {
+      grid-template-columns: 1fr;
+    }
+  }
   }
 </style>
 </head>
@@ -534,7 +550,6 @@ const SERVICES = {
     heroLine:"Raw footage. <span class=\"italic\">Better stories.</span>",
     slides:[["Reel","SaaS Animation","Firmflow","https://youtu.be/hCckaL_B3Jg?si=2a1nCp81ZRexiXso","images/firmflow-thumb.png"],["Reel","Explainer Video","Airbnb Analog Nomad","https://youtu.be/pbRBdpPhlbU","images/airbnb-thumb.png"],["Reel","Podcast Video","Gras-i Surface Solutions","https://www.youtube.com/watch?v=DJYvmSfzTnk&list=PLOhlOVHH9hd6ApzXH7HiswXyUkWHxxl_Y","images/podcast-thumb.jpg"],["Doc","SaaS Animation","Tims Horton","https://youtu.be/Awd769PyqTs","images/timhortons-thumb.png"]],
     projects:[["Informative Video","Creator","Videos/content creator_ashish.mp4","images/creator-thumb.png"],["207k views","Drishyam Films","Videos/Drishyam1.mp4","images/drishyam-thumb.jpg"],["Podcast Video","LLumar Films","Videos/LLumar Video_updated.mp4","images/llumar-thumb.jpg"],["Doc","Founder Story"],["Reel","Event Recap"]],
-    longFormProjects:[["Doc","Brand Documentary"],["Podcast","Full Podcast Episode"],["Vlog","Travel Film Showreel"],["Tutorial","Product Walkthrough"],["Interview","Founder Fireside Chat"],["Corporate","Company Culture Film"]],
     offers:["Storytelling","Pacing","Sound Design","Colour","Motion & VFX","Social Editing"],
     ctaLine:"Have footage? <span class=\"italic\">Let's turn it into a story.</span>"
   },
@@ -741,13 +756,33 @@ function serviceTemplate(slug){
   const s = SERVICES[slug];
   if(!s) return `<div class="wrap" style="padding:120px 0; text-align:center;">Service not found. <a href="#/" data-nav="/" style="color:var(--purple-400)">Back home</a></div>`;
   return `
-  <section class="svc-hero wrap svc-hero-center">
+  <section class="svc-hero wrap svc-hero-center" style="${slug === 'video-editing' ? 'padding-bottom: 20px;' : ''}">
     <a href="#/#services-preview" data-nav="/" class="back-link">← Back to Services</a>
     <div class="eyebrow"><span class="dot"></span>${s.title}</div>
-    <h1>${s.heroLine}</h1>
-    <p class="svc-hero-sub">${slug === 'video-editing' ? 'Recent work' : 'Selected work, what we cover, and how a project with us runs from first call to final file.'}</p>
+    ${slug !== 'video-editing' ? `<h1>${s.heroLine}</h1>` : ''}
+    ${slug !== 'video-editing' ? `<p class="svc-hero-sub">Selected work, what we cover, and how a project with us runs from first call to final file.</p>` : ''}
   </section>
 
+  ${slug === 'video-editing' ? `
+  <section class="wrap" style="padding-bottom: 60px;">
+    <div class="slide-grid">
+      ${s.slides.map(sl=>{
+        const hasUrl = sl[3];
+        const bgStyle = sl[4] ? `background-image: url('${sl[4]}'); background-size: cover; background-position: center;` : '';
+        return `
+        <div class="big-slide ${hasUrl ? 'clickable-slide' : ''}" data-url="${hasUrl || ''}" style="${bgStyle}; min-width:auto; border-radius:18px; overflow:hidden; border:1px solid var(--border);">
+          <div class="bs-tag">${sl[0]}</div>
+          ${hasUrl ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
+          <div class="bs-info">
+            <div class="bs-cat">${sl[2]}</div>
+            <div class="bs-name">${sl[1]}</div>
+          </div>
+          ${hasUrl ? `<div class="yt-player-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+        </div>`;
+      }).join("")}
+    </div>
+  </section>
+  ` : `
   <section class="big-slider-section wrap">
     <div class="big-slider">
       <div class="big-track" id="bigTrack">
@@ -773,6 +808,7 @@ function serviceTemplate(slug){
       <button class="car-btn" id="bigNext" aria-label="Next">→</button>
     </div>
   </section>
+  `}
 
   <section class="projects-section wrap">
     <div class="section-head"><div class="eyebrow"><span class="dot"></span>Selected Projects</div><h2 style="font-size:clamp(26px,3.4vw,38px);">${slug === 'video-editing' ? 'Short form content' : `Recent ${s.title.toLowerCase()} work.`}</h2></div>
@@ -970,9 +1006,23 @@ function playVideoInSlide(slide, videoUrl) {
 
 function buildBigSlider(slug){
   const s = SERVICES[slug];
+  if(!s) return;
+  
+  if(slug === 'video-editing'){
+    document.querySelectorAll('.clickable-slide').forEach(slide => {
+      slide.addEventListener('click', () => {
+        const url = slide.dataset.url;
+        if(url && (!currentYTPlayer || slide.querySelector('.yt-player-container').style.display === 'none')){
+          playVideoInSlide(slide, url);
+        }
+      });
+    });
+    return;
+  }
+  
   const track = document.getElementById('bigTrack');
   const dotsWrap = document.getElementById('bigDots');
-  if(!track || !s) return;
+  if(!track) return;
   const n = s.slides.length;
   let idx = 0;
   dotsWrap.innerHTML = s.slides.map((_,i)=>`<div class="car-dot ${i===0?'active':''}" data-i="${i}"></div>`).join("");
