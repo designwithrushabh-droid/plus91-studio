@@ -310,8 +310,8 @@
   .big-slide::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,.75), transparent 55%);}
   .big-slide .bs-tag{position:absolute; top:22px; left:24px; z-index:2; background:rgba(0,0,0,.35); backdrop-filter:blur(6px); font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; letter-spacing:.03em;}
   .big-slide .bs-info{position:absolute; left:24px; bottom:22px; right:24px; z-index:2;}
-  .big-slide .bs-cat{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--purple-300); font-weight:700;}
-  .big-slide .bs-name{font-size:clamp(22px,3.4vw,34px); font-weight:800; margin-top:6px; letter-spacing:-.02em;}
+  .big-slide .bs-name{font-size:clamp(22px,3.4vw,34px); font-weight:800; letter-spacing:-.02em;}
+  .big-slide .bs-cat{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--purple-300); font-weight:700; margin-top:6px;}
   .clickable-slide{text-decoration:none; display:block; cursor:pointer;}
   .bs-play-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.2); opacity:0; transition:opacity .3s ease; z-index:2;}
   .clickable-slide:hover .bs-play-overlay, .clickable-showcase:hover .bs-play-overlay{opacity:1;}
@@ -746,8 +746,8 @@ function serviceTemplate(slug){
             <div class="bs-tag">${sl[0]}</div>
             ${hasUrl ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
             <div class="bs-info">
-              <div class="bs-cat">${sl[2]}</div>
               <div class="bs-name">${sl[1]}</div>
+              <div class="bs-cat">${sl[2]}</div>
             </div>
             ${hasUrl ? `<div class="yt-player-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
           </div>`;
