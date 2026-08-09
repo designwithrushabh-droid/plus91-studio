@@ -615,8 +615,16 @@ function homeTemplate(){
             <div class="title">${r[1]}</div>
             <div class="kicker">${r[2]}</div>
             <div class="reel-progress"><div class="reel-progress-fill"></div></div>
-            <div class="bottom-row"><div class="play">▶</div><span class="dur">0:24</span><span class="reel-pill">Reel</span></div>
+            <div class="bottom-row">
+              <div class="play" style="cursor:pointer;">▶</div>
+              <span class="dur">0:24</span>
+              ${hasUrl ? `<span class="reel-pill sound-toggle" style="cursor:pointer; background:rgba(255,255,255,.2); pointer-events:auto; z-index:8;">🔇 Muted</span>` : `<span class="reel-pill">Reel</span>`}
+            </div>
             ${hasUrl ? `<div class="phone-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
+            ${hasUrl ? `
+            <div class="phone-play-btn" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:6; pointer-events:none; opacity:0; transition:opacity .3s ease;">
+              <span class="play-icon" style="width:50px; height:50px; border-radius:50%; background:#fff; color:#07050d; display:flex; align-items:center; justify-content:center; font-size:18px; padding-left:3px; box-shadow:0 10px 24px rgba(168,85,247,.45);">▶</span>
+            </div>` : ''}
           </div>`;
         }).join("")}
         <div class="reel-spacer"></div>
@@ -1030,6 +1038,10 @@ function setPlayingCard(card){
       videoContainer.innerHTML = '';
       videoContainer.style.display = 'none';
     }
+    const playBtnOverlay = c.querySelector('.phone-play-btn');
+    if(playBtnOverlay) playBtnOverlay.style.opacity = '0';
+    const soundToggle = c.querySelector('.sound-toggle');
+    if(soundToggle) soundToggle.innerHTML = '🔇 Muted';
   });
 
   card.classList.add('is-playing');
@@ -1039,19 +1051,42 @@ function setPlayingCard(card){
   const videoUrl = card.dataset.videoUrl;
   const videoContainer = card.querySelector('.phone-video-container');
   const fill = card.querySelector('.reel-progress-fill');
+  const playBtnOverlay = card.querySelector('.phone-play-btn');
+  const soundToggle = card.querySelector('.sound-toggle');
 
   if(videoUrl && videoContainer){
     videoContainer.style.display = 'block';
-    videoContainer.innerHTML = `<video src="${videoUrl}" muted autoplay playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></video>`;
+    videoContainer.innerHTML = `<video src="${videoUrl}" playsinline style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></video>`;
     const video = videoContainer.querySelector('video');
     
     // Disable auto-cycle timer while video is playing
     clearInterval(reelTimer);
     
+    // Attempt unmuted play first
+    video.muted = false;
+    if(soundToggle) soundToggle.innerHTML = '🔊 Sound';
+    
+    video.play().catch(err => {
+      // Fallback to muted if blocked
+      video.muted = true;
+      if(soundToggle) soundToggle.innerHTML = '🔇 Muted';
+      video.play();
+    });
+    
     video.ontimeupdate = () => {
       if(fill && video.duration){
         fill.style.width = (video.currentTime / video.duration * 100) + '%';
       }
+    };
+    
+    video.onplay = () => {
+      if(playBtnOverlay) playBtnOverlay.style.opacity = '0';
+      if(icon) icon.textContent = '❚❚';
+    };
+    
+    video.onpause = () => {
+      if(playBtnOverlay) playBtnOverlay.style.opacity = '1';
+      if(icon) icon.textContent = '▶';
     };
     
     video.onended = () => {
@@ -1062,9 +1097,39 @@ function setPlayingCard(card){
         if(activeIndex !== -1){
           const nextIndex = (activeIndex + 1) % cards.length;
           cards[nextIndex].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
-          // Restart auto-cycle loop
           startReelAutoCycle(slider);
         }
+      }
+    };
+    
+    // Wire up sound toggle click
+    if(soundToggle){
+      soundToggle.onclick = (e) => {
+        e.stopPropagation();
+        video.muted = !video.muted;
+        soundToggle.innerHTML = video.muted ? '🔇 Muted' : '🔊 Sound';
+      };
+    }
+    
+    // Wire up card play icon click
+    if(icon){
+      icon.onclick = (e) => {
+        e.stopPropagation();
+        if(video.paused){
+          video.play();
+        } else {
+          video.pause();
+        }
+      };
+    }
+    
+    // Clicking video container toggles play/pause
+    videoContainer.onclick = (e) => {
+      e.stopPropagation();
+      if(video.paused){
+        video.play();
+      } else {
+        video.pause();
       }
     };
   } else {
@@ -1097,6 +1162,10 @@ function stopAllReels(){
       videoContainer.innerHTML = '';
       videoContainer.style.display = 'none';
     }
+    const playBtnOverlay = c.querySelector('.phone-play-btn');
+    if(playBtnOverlay) playBtnOverlay.style.opacity = '0';
+    const soundToggle = c.querySelector('.sound-toggle');
+    if(soundToggle) soundToggle.innerHTML = '🔇 Muted';
   });
   clearInterval(reelTimer);
 }
