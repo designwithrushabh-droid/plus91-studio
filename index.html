@@ -533,7 +533,7 @@ const SERVICES = {
     title:"Video Editing",
     heroLine:"Raw footage. <span class=\"italic\">Better stories.</span>",
     slides:[["Reel","SaaS Animation","Firmflow","https://youtu.be/hCckaL_B3Jg?si=2a1nCp81ZRexiXso","images/firmflow-thumb.png"],["Reel","Explainer Video","Airbnb Analog Nomad","https://youtu.be/pbRBdpPhlbU","images/airbnb-thumb.png"],["Reel","Podcast Video","Gras-i Surface Solutions","https://www.youtube.com/watch?v=DJYvmSfzTnk&list=PLOhlOVHH9hd6ApzXH7HiswXyUkWHxxl_Y","images/podcast-thumb.jpg"],["Doc","Founder Story","Documentary Cut"]],
-    projects:[["Reel","Brand Reel"],["207k views","Drishyam Films","https://www.instagram.com/reel/DUfwrWXjUba/"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
+    projects:[["Reel","Brand Reel"],["207k views","Drishyam Films","Videos/Drishyam1.mp4"],["Reel","Social Cuts"],["Doc","Founder Story"],["Reel","Event Recap"]],
     longFormProjects:[["Doc","Brand Documentary"],["Podcast","Full Podcast Episode"],["Vlog","Travel Film Showreel"],["Tutorial","Product Walkthrough"],["Interview","Founder Fireside Chat"],["Corporate","Company Culture Film"]],
     offers:["Storytelling","Pacing","Sound Design","Colour","Motion & VFX","Social Editing"],
     ctaLine:"Have footage? <span class=\"italic\">Let's turn it into a story.</span>"
@@ -765,16 +765,28 @@ function serviceTemplate(slug){
     <div class="section-head"><div class="eyebrow"><span class="dot"></span>Selected Projects</div><h2 style="font-size:clamp(26px,3.4vw,38px);">${slug === 'video-editing' ? 'Short form content' : `Recent ${s.title.toLowerCase()} work.`}</h2></div>
     <div class="projects-grid">
       ${s.projects.map(p=>{
-        const hasUrl = p[2];
-        const tagOpen = hasUrl ? `<a href="${p[2]}" target="_blank" class="proj-card clickable-slide" style="text-decoration:none;">` : `<div class="proj-card">`;
-        const tagClose = hasUrl ? `</a>` : `</div>`;
+        const url = p[2] || '';
+        const isLocalVideo = url.endsWith('.mp4');
+        const isExternal = url && !isLocalVideo;
+        
+        let tagOpen = `<div class="proj-card">`;
+        let tagClose = `</div>`;
+        if (isExternal) {
+          tagOpen = `<a href="${url}" target="_blank" class="proj-card clickable-slide" style="text-decoration:none;">`;
+          tagClose = `</a>`;
+        } else if (isLocalVideo) {
+          tagOpen = `<div class="proj-card clickable-slide local-video-card" data-video-url="${url}">`;
+          tagClose = `</div>`;
+        }
+        
         return `
         ${tagOpen}
-          ${hasUrl ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
+          ${url ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
           <div class="pc-label">
             <div class="pc-cat">${p[0]}</div>
             <div class="pc-name">${p[1]}</div>
           </div>
+          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
         ${tagClose}`;
       }).join("")}
     </div>
@@ -788,16 +800,28 @@ function serviceTemplate(slug){
     </div>
     <div class="longform-grid">
       ${s.longFormProjects.map(p=>{
-        const hasUrl = p[2];
-        const tagOpen = hasUrl ? `<a href="${p[2]}" target="_blank" class="proj-card card-16-9 clickable-slide" style="text-decoration:none;">` : `<div class="proj-card card-16-9">`;
-        const tagClose = hasUrl ? `</a>` : `</div>`;
+        const url = p[2] || '';
+        const isLocalVideo = url.endsWith('.mp4');
+        const isExternal = url && !isLocalVideo;
+        
+        let tagOpen = `<div class="proj-card card-16-9">`;
+        let tagClose = `</div>`;
+        if (isExternal) {
+          tagOpen = `<a href="${url}" target="_blank" class="proj-card card-16-9 clickable-slide" style="text-decoration:none;">`;
+          tagClose = `</a>`;
+        } else if (isLocalVideo) {
+          tagOpen = `<div class="proj-card card-16-9 clickable-slide local-video-card" data-video-url="${url}">`;
+          tagClose = `</div>`;
+        }
+        
         return `
         ${tagOpen}
-          ${hasUrl ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
+          ${url ? `<div class="bs-play-overlay"><span class="play-icon">▶</span></div>` : ''}
           <div class="pc-label">
             <div class="pc-cat">${p[0]}</div>
             <div class="pc-name">${p[1]}</div>
           </div>
+          ${isLocalVideo ? `<div class="local-video-container" style="position:absolute; inset:0; display:none; z-index:5; background:#000;"></div>` : ''}
         ${tagClose}`;
       }).join("")}
     </div>
@@ -1114,6 +1138,25 @@ function initShowcaseVideo(){
   activeTimers.push(()=>{ if(showcasePlayer){ try{showcasePlayer.destroy();}catch(e){} showcasePlayer = null; } });
 }
 
+function initLocalVideoPlayers(){
+  document.querySelectorAll('.local-video-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const url = card.dataset.videoUrl;
+      const container = card.querySelector('.local-video-container');
+      if(!container) return;
+      
+      container.style.display = 'block';
+      container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:cover; border-radius:18px;"></video>`;
+    });
+  });
+  activeTimers.push(()=>{
+    document.querySelectorAll('.local-video-container').forEach(c => {
+      c.innerHTML = '';
+      c.style.display = 'none';
+    });
+  });
+}
+
 /* ============ ROUTER ============ */
 const app = document.getElementById('app');
 
@@ -1126,6 +1169,7 @@ function render(){
   if(parts[0] === 'service' && parts[1]){
     app.innerHTML = serviceTemplate(parts[1]);
     buildBigSlider(parts[1]);
+    initLocalVideoPlayers();
     buildTestimonialCarousel('tTrack2','tDots2','tPrev2','tNext2');
     window.scrollTo({top:0, behavior:'instant'});
   } else {
